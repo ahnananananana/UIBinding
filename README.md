@@ -1,5 +1,5 @@
 # How to use
-1. Set [UIBindable] on property which want to bind.
+1. Set **[UIBindable]** on property which want to bind.
 
 ![캡처](https://user-images.githubusercontent.com/65099451/115065909-bee3ae80-9f29-11eb-9c39-a53d03dea273.PNG)
 
