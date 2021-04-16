@@ -82,33 +82,13 @@ namespace HDV.UIBinding
             if (assemblyPath.Contains("-Editor"))
                 return;
 
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
             List<Type> derivedTypes = new List<Type>();
             List<PropertyDefinition> properties = new List<PropertyDefinition>();
 
             bool isModified = false;
             #region Cecil
-            /*HashSet<string> dependencyPaths = GetDependecyPaths(assemblyPath);
-            string unityEngineCoreModuleDLL = UnityEditorInternal.InternalEditorUtility.GetEngineCoreModuleAssemblyPath();
-            dependencyPaths.Add(Path.GetDirectoryName(unityEngineCoreModuleDLL));
-            using (DefaultAssemblyResolver asmResolver = new DefaultAssemblyResolver())*/
             using (AssemblyDefinition currentAssembly = AssemblyDefinition.ReadAssembly(assemblyPath, new ReaderParameters { ReadWrite = true, ReadSymbols = true/*, AssemblyResolver = asmResolver*/ }))
             {
-                /*asmResolver.AddSearchDirectory(Path.GetDirectoryName(assemblyPath));
-                string directoryName = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
-                directoryName = directoryName?.Replace(@"file:\", "");
-                asmResolver.AddSearchDirectory(directoryName);
-
-                var dependencies = dependencyPaths.ToArray();
-                if (dependencies != null)
-                {
-                    foreach (string path in dependencies)
-                    {
-                        asmResolver.AddSearchDirectory(path);
-                    }
-                }*/
-
                 _mainModule = currentAssembly.MainModule;
 
                 var p = currentAssembly.MainModule.Types.Where(o => o.IsClass).SelectMany(t => t.Properties);
@@ -184,17 +164,12 @@ namespace HDV.UIBinding
                                     methodName = "UpdateFloatValue";
                                     break;
                                 }
-                            /*case MetadataType.String:
-                                {
-                                    methodName = "UpdateStringValue";
-                                    break;
-                                }*/
                             case MetadataType.Int32:
                                 {
                                     methodName = "UpdateIntValue";
                                     break;
                                 }
-                            //TODO: 제너릭이 필요하다...
+                            //TODO: Need Generic
                             case MetadataType.String:
                             case MetadataType.Class:
                             case MetadataType.Object:
@@ -216,8 +191,6 @@ namespace HDV.UIBinding
                         processor.InsertBefore(targetInst, processor.Create(OpCodes.Ldstr, pd.Name));
                         processor.InsertBefore(targetInst, processor.Create(OpCodes.Ldarg_1));
 
-                        /*MethodInfo gm = gt.GetMethod("UpdateValue");
-                        MethodReference gr = _mainModule.ImportReference(gm);*/
                         processor.InsertBefore(targetInst, processor.Create(OpCodes.Call, md));
 
                         isModified = true;
@@ -231,8 +204,6 @@ namespace HDV.UIBinding
             }
 
             #endregion
-            UnityDebug.Log("UI Weaving time: " + sw.ElapsedMilliseconds);
-            sw.Stop();
         }
 
         private static TypeDefinition SafeResolve(TypeReference typeRef)
