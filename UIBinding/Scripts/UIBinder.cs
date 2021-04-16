@@ -67,6 +67,9 @@ namespace HDV.UIBinding
 
         private void OnEnable()
         {
+            if (_propertyInfo == null)
+                return;
+
             switch (_propertyInfo.PropertyType.Name)
             {
                 //TODO: Need Generic!
@@ -101,6 +104,9 @@ namespace HDV.UIBinding
 
         private void OnDisable()
         {
+            if (_propertyInfo == null)
+                return;
+
             switch (_propertyInfo.PropertyType.Name)
             {
                 //TODO: Need Generic!
